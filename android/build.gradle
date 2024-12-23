@@ -8,7 +8,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.5.0'
+//        classpath 'com.android.tools.build:gradle:3.5.0'
     }
 }
 
@@ -22,8 +22,8 @@ rootProject.allprojects {
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 29
-
+    compileSdk 34
+    namespace 'org.leanflutter.plugins.flutter_aliyun_captcha'
     defaultConfig {
         minSdkVersion 19
     }

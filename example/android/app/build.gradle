@@ -25,19 +25,19 @@ apply plugin: 'com.android.application'
 apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 
 android {
-    compileSdkVersion 29
-
-    lintOptions {
-        disable 'InvalidPackage'
-    }
+    compileSdk 34
+    namespace "org.leanflutter.plugins.flutter_aliyun_captcha_example"
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "org.leanflutter.plugins.flutter_aliyun_captcha_example"
+//        applicationId "org.leanflutter.plugins.flutter_aliyun_captcha_example"
         minSdkVersion 19
-        targetSdkVersion 29
+        targetSdkVersion 33
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+    }
+    lintOptions {
+        disable 'InvalidPackage'
     }
 
     buildTypes {
