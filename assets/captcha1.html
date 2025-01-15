@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1, user-scalable=0, viewport-fit=cover"
     />
-    <script src="https://o.alicdn.com/captcha-frontend/aliyunCaptcha/AliyunCaptcha.js"></script>
+    <script src="https://g.alicdn.com/AWSC/AWSC/awsc.js"></script>
     <style>
       *:not(input, textarea) {
         -webkit-touch-callout: none;
@@ -23,10 +23,6 @@
           "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans",
           "Helvetica Neue", sans-serif;
       }
-      /* #captcha_button {
-        width: 100vw;
-        height: 100vh;
-      } */
       .sm-btn-default:hover,
       .sm-btn-success:hover,
       .sm-btn-loading:hover,
@@ -50,7 +46,6 @@
   </head>
   <body>
     <div id="captcha_button"></div>
-    <button id="test_button">弹出</button>
     <script type="text/javascript">
       const bridgeMethod = (method, data) => {
         if (window.webkit) {
@@ -66,51 +61,7 @@
       const bridgeOnFailure = (data) => bridgeMethod("onFailure", data);
       const bridgeOnError = (data) => bridgeMethod("onError", data);
 
-      // 绑定验证码实例函数。该函数为固定写法，无需修改
-      const getInstance = (instance) => {
-        this.captcha = instance;
-      }
-
-      const captchaVerifyCallback = async (captchaVerifyParam) => {
-        try {
-          // 2秒后返回验证结果
-          // 调后端发短信接口  带着参数
-          await new Promise((resolve) => setTimeout(resolve, 2000));
-          const res = {
-            code: 0,
-          };
-
-          if (res?.code === 0) {
-            return {
-              captchaResult: true,
-              bizResult: true,
-            };
-          }
-
-          return {
-            captchaResult: false,
-            bizResult: false,
-          };
-        } catch (err) {
-          return {
-            captchaResult: false,
-            bizResult: false,
-          };
-        }
-      };
-
-      // 业务请求验证结果回调函数
-      const onBizResultCallback = (bizResult) => {
-        if (bizResult === true) {
-          // 验证通过,调用倒计时
-          // this.onCount();
-        } else {
-          // 如果业务验证不通过，给出不通过提示
-          alert('验证不通过！');
-        }
-      }
-
-      const init_old = (type, size = {}, optionJsonString, customStyle) => {
+      const init = (type, size = {}, optionJsonString, customStyle) => {
         let option = JSON.parse(optionJsonString);
         option = Object.assign(option, size, {
           renderTo: "captcha_button",
@@ -155,28 +106,7 @@
         }, 100);
       };
 
-
-      window.initAliyunCaptcha({
-        SceneId: '4ya4rgca', // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
-        prefix: 'ibtqnk', // 身份标。开通阿里云验证码2.0后，您可以在控制台概览页面的实例基本信息卡片区域，获取身份标
-        mode: 'popup', // 验证码模式。popup表示要集成的验证码模式为弹出式。无需修改
-        element: '#captcha_button', // 页面上预留的渲染验证码的元素，与原代码中预留的页面元素保持一致。
-        button: '#test_button', // 触发验证码弹窗的元素。button表示单击登录按钮后，触发captchaVerifyCallback函数。您可以根据实际使用的元素修改element的值
-        captchaVerifyCallback: captchaVerifyCallback, // 业务请求(带验证码校验)回调函数，无需修改
-        onBizResultCallback: onBizResultCallback, // 业务请求结果回调函数，无需修改
-        getInstance: getInstance, // 绑定验证码实例函数，无需修改
-        slideStyle: {
-          width: 320,
-          height: 40,
-        }, // 滑块验���码样式，支持自定义宽度和高度，单位为px。其中，width最小值为320 px
-        language: 'cn', // 验证码语言类型，支持简体中文（cn）、繁体中文（tw）、英文（en）
-        region: 'cn', // 验证码示例所属地区，支持中国内地（cn）、新加坡（sgp）
-      });
-      const init = (type, size = {}, optionJsonString, customStyle) => {
-      }
-
       window._init = init;
-
     </script>
   </body>
 </html>
