@@ -239,8 +239,8 @@ class _HomePageState extends State<HomePage> {
                   SizedBox(height: 10),
                   Container(
                     // width: double.infinity,
-                    width: 280,
-                    height: 44,
+                    width: 480,
+                    height: 60,
                     margin: EdgeInsets.only(
                       top: 10,
                       bottom: 10,
