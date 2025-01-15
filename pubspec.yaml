@@ -1,6 +1,6 @@
 name: flutter_aliyun_captcha
 description: 适用于 Flutter 的阿里云人机验证插件
-version: 1.1.0
+version: 2.0.0
 homepage: https://github.com/leanflutter/flutter_aliyun_captcha
 
 environment:
