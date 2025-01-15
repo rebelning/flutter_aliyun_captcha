@@ -18,6 +18,7 @@ class AliyunCaptchaButton extends StatefulWidget {
   final AliyunCaptchaOption? option;
   final String? customStyle;
   final Function(dynamic data)? onSuccess;
+  final Function(dynamic data)? onBizCallback;
   final Function(String failCode)? onFailure;
   final Function(String errorCode)? onError;
 
@@ -28,6 +29,7 @@ class AliyunCaptchaButton extends StatefulWidget {
     this.option,
     this.customStyle,
     this.onSuccess,
+    this.onBizCallback,
     this.onFailure,
     this.onError,
   }) : super(key: key);

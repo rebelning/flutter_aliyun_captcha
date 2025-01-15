@@ -16,7 +16,9 @@ public class AliyunCaptchaSender {
     void onSuccess(String data) {
         this.listener.onSuccess(data);
     }
-
+    void onBizCallback(String data) {
+        this.listener.onBizCallback(data);
+    }
     void onFailure(String data) {
         this.listener.onFailure(data);
     }

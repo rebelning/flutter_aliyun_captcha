@@ -117,7 +117,7 @@ public class FlutterAliyunCaptchaButton
         }
     };
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint({"ResourceAsColor", "SetJavaScriptEnabled"})
     FlutterAliyunCaptchaButton(
             final Context context,
             BinaryMessenger messenger,
@@ -167,8 +167,17 @@ public class FlutterAliyunCaptchaButton
             public void onSuccess(String data) {
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onSuccess");
-                result.put("data", convertMsgToMap(data));
+//                result.put("data", convertMsgToMap(data));
+                result.put("data",data);
+                eventSink.success(result);
+            }
 
+            @Override
+            public void onBizCallback(String data) {
+                final Map<String, Object> result = new HashMap<>();
+                result.put("method", "onBizCallback");
+//                result.put("data", convertMsgToMap(data));
+                result.put("data",data);
                 eventSink.success(result);
             }
 
@@ -176,8 +185,8 @@ public class FlutterAliyunCaptchaButton
             public void onFailure(String data) {
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onFailure");
-                result.put("data", convertMsgToMap(data));
-
+//                result.put("data", convertMsgToMap(data));
+                result.put("data",data);
                 eventSink.success(result);
             }
 
@@ -185,7 +194,8 @@ public class FlutterAliyunCaptchaButton
             public void onError(String data) {
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onError");
-                result.put("data", convertMsgToMap(data));
+//                result.put("data", convertMsgToMap(data));
+                result.put("data",data);
 
                 eventSink.success(result);
             }
@@ -256,6 +266,7 @@ public class FlutterAliyunCaptchaButton
             map = toMap(jsonObject);
         } catch (JSONException ex) {
             // skip;
+            ex.printStackTrace();
         }
         return map;
     }

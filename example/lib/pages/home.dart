@@ -251,42 +251,15 @@ class _HomePageState extends State<HomePage> {
                       controller: _captchaController,
                       type: _captchaType,
                       option: AliyunCaptchaOption(
-                        appKey: 'FFFF0N00000000006CAB',
-                        scene: _captchaType == AliyunCaptchaType.slide
-                            ? 'nc_login'
-                            : 'ic_login',
-                        language: _language,
-                        // hideErrorCode: true,
-                        test: _test != 'block'
-                            ? null
-                            : _captchaType == AliyunCaptchaType.slide
-                                ? 'code300'
-                                : 800,
+                        sceneId: '',
+                        prefix: '',
                       ),
-                      customStyle: '''
-                        .nc_scale {
-                          background: #eeeeee !important;
-                          /* 默认背景色 */
-                        }
-
-                        .nc_scale div.nc_bg {
-                          background: #4696ec !important;
-                          /* 滑过时的背景色 */
-                        }
-
-                        .nc_scale .scale_text2 {
-                          color: #fff !important;
-                          /* 滑过时的字体颜色 */
-                        }
-
-                        .errloading {
-                          border: #ff0000 1px solid !important;
-                          color: #ef9f06 !important;
-                        }
-                      ''',
                       onSuccess: (dynamic data) {
                         // {"sig": "...", "token": "..."}
                         _addLog('onSuccess', data);
+                      },
+                      onBizCallback: (dynamic data) {
+                        _addLog('onBizCallback', data);
                       },
                       onFailure: (String failCode) {
                         _addLog('onFailure', 'failCode: $failCode');

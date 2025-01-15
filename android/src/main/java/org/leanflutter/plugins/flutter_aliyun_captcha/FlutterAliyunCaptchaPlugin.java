@@ -31,7 +31,8 @@ public class FlutterAliyunCaptchaPlugin implements FlutterPlugin, MethodCallHand
         this.channel.setMethodCallHandler(this);
 
         PlatformViewFactory captchaButtonViewFactory = new AliyunCaptchaButtonFactory(messenger, this.captchaHtmlPath);
-        PlatformViewRegistry platformViewRegistry = pluginBinding.getFlutterEngine().getPlatformViewsController().getRegistry();
+//        PlatformViewRegistry platformViewRegistry = pluginBinding.getFlutterEngine().getPlatformViewsController().getRegistry();
+        PlatformViewRegistry platformViewRegistry = pluginBinding.getPlatformViewRegistry();
         platformViewRegistry.registerViewFactory(ALIYUN_CAPTCHA_BUTTON_VIEWTYPE, captchaButtonViewFactory);
     }
 
@@ -63,6 +64,6 @@ public class FlutterAliyunCaptchaPlugin implements FlutterPlugin, MethodCallHand
     }
 
     private void getSDKVersion(@NonNull MethodCall call, @NonNull Result result) {
-        result.success("1.0.4");
+        result.success("2.0.0");
     }
 }
