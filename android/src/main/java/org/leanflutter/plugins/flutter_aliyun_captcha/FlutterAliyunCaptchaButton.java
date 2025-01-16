@@ -38,16 +38,22 @@ import static org.leanflutter.plugins.flutter_aliyun_captcha.Constants.ALIYUN_CA
 
 class FlutterAliyunCaptchaButtonJsInterface {
     private Handler handler = new Handler(Looper.getMainLooper());
+    private MethodChannel methodChannel;
 
+    // 构造函数，传入 MethodChannel
+    public FlutterAliyunCaptchaButtonJsInterface(MethodChannel methodChannel) {
+        this.methodChannel = methodChannel;
+    }
     @JavascriptInterface
     public void onSuccess(final String data) {
-        Runnable runnable = new Runnable() {
-            @Override
-            public void run() {
-                AliyunCaptchaSender.getInstance().onSuccess(data);
-            }
-        };
-        handler.post(runnable);
+//        Runnable runnable = new Runnable() {
+//            @Override
+//            public void run() {
+//                AliyunCaptchaSender.getInstance().onSuccess(data);
+//            }
+//        };
+//        handler.post(runnable);
+        handler.post(() -> notifyFlutterAndAwaitResult("onSuccess", data));
     }
 
     @JavascriptInterface
@@ -81,6 +87,28 @@ class FlutterAliyunCaptchaButtonJsInterface {
             }
         };
         handler.post(runnable);
+    }
+    private void notifyFlutterAndAwaitResult(String method, String data) {
+        // 通知 Flutter，并等待返回值
+        methodChannel.invokeMethod(method, data, new MethodChannel.Result() {
+            @Override
+            public void success(Object result) {
+                // Flutter 返回成功，通知 AliyunCaptchaSender
+                AliyunCaptchaSender.getInstance().onSuccess(result.toString());
+            }
+
+            @Override
+            public void error(String errorCode, String errorMessage, Object errorDetails) {
+                // Flutter 返回错误，通知 AliyunCaptchaSender
+                AliyunCaptchaSender.getInstance().onError(errorMessage);
+            }
+
+            @Override
+            public void notImplemented() {
+                // 方法未实现，通知 AliyunCaptchaSender
+                AliyunCaptchaSender.getInstance().onError("Flutter method not implemented");
+            }
+        });
     }
 }
 
@@ -157,7 +185,7 @@ public class FlutterAliyunCaptchaButton
 
         this.webView.setBackgroundColor(Color.parseColor("#F2F5FC"));
         this.webView.setWebViewClient(this.webViewClient);
-        this.webView.addJavascriptInterface(new FlutterAliyunCaptchaButtonJsInterface(), "messageHandlers");
+        this.webView.addJavascriptInterface(new FlutterAliyunCaptchaButtonJsInterface(methodChannel), "messageHandlers");
 
         this.webSettings = this.webView.getSettings();
         this.webSettings.setJavaScriptEnabled(true);
@@ -270,11 +298,12 @@ public class FlutterAliyunCaptchaButton
                 captchaType,
                 widgetHeight,
                 captchaOptionJsonString);
-        webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-            }
-        });
+     webView.post(()->webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
+         @Override
+         public void onReceiveValue(String value) {
+         }
+     })) ;
+
         result.success(true);
     }
 

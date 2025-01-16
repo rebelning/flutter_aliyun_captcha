@@ -6,6 +6,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_aliyun_captcha/src/aliyun_captcha_handler.dart';
 
 import 'aliyun_captcha_controller.dart';
 import 'aliyun_captcha_option.dart';
@@ -41,7 +42,8 @@ class AliyunCaptchaButton extends StatefulWidget {
 class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
   GlobalKey _captchaButtonKey = GlobalKey();
 
-  EventChannel? _eventChannel;
+  // EventChannel? _eventChannel;
+
   AliyunCaptchaController? _captchaController;
 
   AliyunCaptchaController? get captchaController {
@@ -52,6 +54,11 @@ class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
       _captchaController = AliyunCaptchaController();
     }
     return _captchaController!;
+  }
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   @override
@@ -102,11 +109,27 @@ class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
     if (captchaController != null) {
       captchaController!.initWithViewId(viewId);
     }
-    _eventChannel = EventChannel(
-      '${kAliyunCaptchaButtonEventChannelName}_$viewId',
+    // _eventChannel = EventChannel(
+    //   '${kAliyunCaptchaButtonEventChannelName}_$viewId',
+    // );
+    // _eventChannel!.receiveBroadcastStream().listen(_handleOnEvent);
+    AliyunCaptchaHandler.init(viewId);
+    AliyunCaptchaHandler.registerHandlers(
+      onSuccess: widget.onSuccess != null
+          ? (data) async {
+              final result = widget.onSuccess!(data);
+              return "Flutter成功返回：$result";
+            }
+          : null,
+      onBizCallback: widget.onBizCallback != null
+          ? (data) async {
+              widget.onBizCallback!(data);
+              return "业务回调成功";
+            }
+          : null,
+      onFailure: null,
+      onError: null,
     );
-    _eventChannel!.receiveBroadcastStream().listen(_handleOnEvent);
-
     Future.delayed(Duration(milliseconds: 20))
         .then((value) => captchaController!.refresh(null));
   }
@@ -135,9 +158,6 @@ class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
           )
             ..addOnPlatformViewCreatedListener(params.onPlatformViewCreated)
             ..addOnPlatformViewCreatedListener((int id) {
-              if (_onPlatformViewCreated == null) {
-                return;
-              }
               _onPlatformViewCreated(params.id);
             })
             ..create();
