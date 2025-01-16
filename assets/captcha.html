@@ -78,7 +78,7 @@
         this.captcha = instance;
       }
 
-      const captchaVerifyCallback = async (captchaVerifyParam) => {
+      function captchaVerifyCallback(captchaVerifyParam) {
         try {
           let data = JSON.parse(captchaVerifyParam);
           bridgeOnSuccess(data);
@@ -110,7 +110,7 @@
       };
 
       // 业务请求验证结果回调函数
-      const onBizResultCallback = (bizResult) => {
+      function onBizResultCallback(bizResult)  {
         bridgeOnBizCallback(bizResult);
       /**  if (bizResult === true) {
           // 验证通过,调用倒计时
