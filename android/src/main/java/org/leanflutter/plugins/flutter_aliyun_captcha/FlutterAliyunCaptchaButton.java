@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -178,6 +179,7 @@ public class FlutterAliyunCaptchaButton
         AliyunCaptchaSender.getInstance().listene(new AliyunCaptchaListener() {
             @Override
             public void onSuccess(String data) {
+                Log.d("data=","onSuccess="+data);
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onSuccess");
 //                result.put("data", convertMsgToMap(data));

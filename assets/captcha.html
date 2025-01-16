@@ -80,7 +80,8 @@
 
       const captchaVerifyCallback = async (captchaVerifyParam) => {
         try {
-          bridgeOnSuccess(captchaVerifyParam);
+          let data = JSON.parse(captchaVerifyParam);
+          bridgeOnSuccess(data);
           // 2秒后返回验证结果
           // 调后端发短信接口  带着参数
          /** await new Promise((resolve) => setTimeout(resolve, 2000));
