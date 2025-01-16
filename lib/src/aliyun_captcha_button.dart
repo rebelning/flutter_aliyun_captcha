@@ -18,10 +18,10 @@ class AliyunCaptchaButton extends StatefulWidget {
   final AliyunCaptchaType? type;
   final AliyunCaptchaOption? option;
   final String? customStyle;
-  final Function(dynamic data)? onSuccess;
-  final Function(dynamic data)? onBizCallback;
-  final Function(String failCode)? onFailure;
-  final Function(String errorCode)? onError;
+  final Future<String?> Function(String? data)? onSuccess;
+  final Function(String? data)? onBizCallback;
+  final Function(String? failCode)? onFailure;
+  final Function(String? errorCode)? onError;
 
   AliyunCaptchaButton({
     Key? key,
@@ -117,14 +117,12 @@ class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
     AliyunCaptchaHandler.registerHandlers(
       onSuccess: widget.onSuccess != null
           ? (data) async {
-              final result = widget.onSuccess!(data);
-              return "Flutter成功返回：$result";
+              return widget.onSuccess!(data);
             }
           : null,
       onBizCallback: widget.onBizCallback != null
           ? (data) async {
-              widget.onBizCallback!(data);
-              return "业务回调成功";
+              return widget.onBizCallback!(data);
             }
           : null,
       onFailure: null,

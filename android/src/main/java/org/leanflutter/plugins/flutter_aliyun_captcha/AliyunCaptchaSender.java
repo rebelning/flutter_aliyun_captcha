@@ -1,5 +1,7 @@
 package org.leanflutter.plugins.flutter_aliyun_captcha;
 
+import io.flutter.plugin.common.MethodChannel;
+
 public class AliyunCaptchaSender {
     private static AliyunCaptchaSender instance = new AliyunCaptchaSender();
 
@@ -16,6 +18,7 @@ public class AliyunCaptchaSender {
     void onSuccess(String data) {
         this.listener.onSuccess(data);
     }
+
     void onBizCallback(String data) {
         this.listener.onBizCallback(data);
     }

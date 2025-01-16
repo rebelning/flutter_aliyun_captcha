@@ -46,14 +46,14 @@ class FlutterAliyunCaptchaButtonJsInterface {
     }
     @JavascriptInterface
     public void onSuccess(final String data) {
-//        Runnable runnable = new Runnable() {
-//            @Override
-//            public void run() {
-//                AliyunCaptchaSender.getInstance().onSuccess(data);
-//            }
-//        };
-//        handler.post(runnable);
-        handler.post(() -> notifyFlutterAndAwaitResult("onSuccess", data));
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                AliyunCaptchaSender.getInstance().onSuccess(data);
+            }
+        };
+        handler.post(runnable);
+//        handler.post(() -> notifyFlutterAndAwaitResult("onSuccess", data));
     }
 
     @JavascriptInterface
@@ -88,28 +88,7 @@ class FlutterAliyunCaptchaButtonJsInterface {
         };
         handler.post(runnable);
     }
-    private void notifyFlutterAndAwaitResult(String method, String data) {
-        // 通知 Flutter，并等待返回值
-        methodChannel.invokeMethod(method, data, new MethodChannel.Result() {
-            @Override
-            public void success(Object result) {
-                // Flutter 返回成功，通知 AliyunCaptchaSender
-                AliyunCaptchaSender.getInstance().onSuccess(result.toString());
-            }
 
-            @Override
-            public void error(String errorCode, String errorMessage, Object errorDetails) {
-                // Flutter 返回错误，通知 AliyunCaptchaSender
-                AliyunCaptchaSender.getInstance().onError(errorMessage);
-            }
-
-            @Override
-            public void notImplemented() {
-                // 方法未实现，通知 AliyunCaptchaSender
-                AliyunCaptchaSender.getInstance().onError("Flutter method not implemented");
-            }
-        });
-    }
 }
 
 public class FlutterAliyunCaptchaButton
@@ -165,6 +144,7 @@ public class FlutterAliyunCaptchaButton
             int viewId,
             Map<String, Object> params,
             String captchaHtmlPath) {
+        Log.d("channel","channel name="+ALIYUN_CAPTCHA_BUTTON_CHANNEL_NAME + "_" + viewId);
         methodChannel = new MethodChannel(messenger, ALIYUN_CAPTCHA_BUTTON_CHANNEL_NAME + "_" + viewId);
         methodChannel.setMethodCallHandler(this);
 
@@ -211,7 +191,8 @@ public class FlutterAliyunCaptchaButton
                 result.put("method", "onSuccess");
 //                result.put("data", convertMsgToMap(data));
                 result.put("data",data);
-                eventSink.success(result);
+//                eventSink.success(result);
+                notifyFlutterAndAwaitResult("onSuccess",result,true);
             }
 
             @Override
@@ -220,7 +201,8 @@ public class FlutterAliyunCaptchaButton
                 result.put("method", "onBizCallback");
 //                result.put("data", convertMsgToMap(data));
                 result.put("data",data);
-                eventSink.success(result);
+//                eventSink.success(result);
+                notifyFlutterAndAwaitResult("onBizCallback",result,false);
             }
 
             @Override
@@ -229,7 +211,8 @@ public class FlutterAliyunCaptchaButton
                 result.put("method", "onFailure");
 //                result.put("data", convertMsgToMap(data));
                 result.put("data",data);
-                eventSink.success(result);
+//                eventSink.success(result);
+                notifyFlutterAndAwaitResult("onFailure",result,false);
             }
 
             @Override
@@ -238,12 +221,47 @@ public class FlutterAliyunCaptchaButton
                 result.put("method", "onError");
 //                result.put("data", convertMsgToMap(data));
                 result.put("data",data);
-
-                eventSink.success(result);
+                Log.d("onError",data);
+//                eventSink.success(result);
+                notifyFlutterAndAwaitResult("onError",result,false);
             }
         });
     }
+    private void notifyFlutterAndAwaitResult(String method,Map<String, Object> result,boolean isCallback) {
+        // 通知 Flutter，并等待返回值
+        methodChannel.invokeMethod(method, result, new MethodChannel.Result() {
+            @Override
+            public void success(Object result) {
+                // Flutter 返回成功，通知 AliyunCaptchaSender
+                Log.d("invokeMethod","result"+result);
+                if(isCallback){
+                    callOnNativeSuccessCallback(result.toString());
+                }
+            }
+            @Override
+            public void error(String errorCode, String errorMessage, Object errorDetails) {
+                // Flutter 返回错误，通知 AliyunCaptchaSender
+            }
 
+            @Override
+            public void notImplemented() {
+                // 方法未实现，通知 AliyunCaptchaSender
+            }
+        });
+
+
+    }
+    private void callOnNativeSuccessCallback(String response) {
+        // 将 response 转换为 JSON 格式的字符串
+//        String jsCode = String.format("window.onNativeSuccessCallback(%s);", response);
+        String jsCode = String.format("window.onNativeSuccessCallback('%s');",
+                response);
+        // 调用 JavaScript
+         webView.evaluateJavascript(jsCode, value -> {
+            // 处理 JavaScript 执行后的返回值
+            Log.d("JS Execution", "Result: " + value);
+        });
+    }
     @Override
     public View getView() {
         return containerView;
@@ -294,16 +312,17 @@ public class FlutterAliyunCaptchaButton
         final float scale = webView.getContext().getResources().getDisplayMetrics().density;
 
         int widgetHeight = (int) (containerView.getMeasuredHeight() / scale);
+
         String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s');",
                 captchaType,
                 widgetHeight,
                 captchaOptionJsonString);
-     webView.post(()->webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
-         @Override
-         public void onReceiveValue(String value) {
-         }
-     })) ;
 
+        webView.post(()->webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
+            @Override
+            public void onReceiveValue(String value) {
+            }
+        }));
         result.success(true);
     }
 

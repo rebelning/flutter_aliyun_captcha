@@ -80,11 +80,15 @@
       const bridgeOnSuccess = (data) => {
         return new Promise((resolve, reject) => {
           try {
+            console.log("bridgeOnSuccess","1111111111111111" ); 
             // 通知原生，并设置一个临时全局回调函数
             window.onNativeSuccessCallback = (response) => {
+              
+              //console.log("onNativeSuccessCallback", response);
+              console.log("bridgeOnSuccess-33333333333",JSON.stringify(response) );  
               resolve(response); // 原生返回结果后，resolve Promise
             };
-      
+            console.log("bridgeOnSuccess","2222222222222222222" );  
             // 调用原生方法
             bridgeMethod("onSuccess", data);
           } catch (err) {
@@ -97,9 +101,13 @@
           let data = JSON.parse(captchaVerifyParam);
           // 等待原生返回结果
           const nativeResponse = await bridgeOnSuccess(data);
+          console.log("bridgeOnSuccess-4444444444444",nativeResponse);
+          let nativeRes = JSON.parse(nativeResponse); 
+          console.log("bridgeOnSuccess-5555555555555",nativeRes.code); 
+         
 
-    // 根据原生返回结果判断业务逻辑
-          if (nativeResponse?.code === 0) {
+          // 根据原生返回结果判断业务逻辑
+          if (nativeRes.code === 0) {
             return {
               captchaResult: true,
               bizResult: true,
@@ -137,6 +145,7 @@
      
      
       const init = (type, size = {}, optionJsonString) => {
+       
         let option = JSON.parse(optionJsonString);
         window.initAliyunCaptcha({
           SceneId: option.sceneId, // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
@@ -160,7 +169,10 @@
       }
 
       window._init = init;
-
+      
+      window.onNativeSuccessCallback= () => {
+        console.log( "onNativeSuccessCallback", 33333333333333333333333333333333333)
+      }
     </script>
   </body>
 </html>

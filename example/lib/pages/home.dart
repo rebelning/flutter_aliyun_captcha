@@ -254,17 +254,22 @@ class _HomePageState extends State<HomePage> {
                         sceneId: '',
                         prefix: '',
                       ),
-                      onSuccess: (dynamic data) {
+                      onSuccess: (String? data) async {
                         // {"sig": "...", "token": "..."}
                         _addLog('onSuccess', data);
+                        Map<String, dynamic> result = {
+                          "code": 0,
+                          "message": "Success"
+                        };
+                        return Future.value(json.encode(result));
                       },
-                      onBizCallback: (dynamic data) {
+                      onBizCallback: (String? data) {
                         _addLog('onBizCallback', data);
                       },
-                      onFailure: (String failCode) {
+                      onFailure: (String? failCode) {
                         _addLog('onFailure', 'failCode: $failCode');
                       },
-                      onError: (String errorCode) {
+                      onError: (String? errorCode) {
                         _addLog('onError', 'errorCode: $errorCode');
                       },
                     ),
