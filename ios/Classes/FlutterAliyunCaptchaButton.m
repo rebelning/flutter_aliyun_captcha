@@ -44,6 +44,13 @@
             };
             self->_eventSink(eventData);
         };
+        _aliyunCaptchaButton.onBizCallback = ^(NSDictionary * _Nonnull data) {
+            NSDictionary<NSString *, id> *eventData = @{
+                @"method": @"onBizCallback",
+                @"data": data ?: @"",
+            };
+            self->_eventSink(eventData);
+        };
         _aliyunCaptchaButton.onFailure = ^(NSDictionary * _Nonnull data) {
             NSDictionary<NSString *, id> *eventData = @{
                 @"method": @"onFailure",
@@ -189,6 +196,7 @@
         
         WKUserContentController* userContentController = [[WKUserContentController alloc] init];
         [userContentController addScriptMessageHandler:self name:@"onSuccess"];
+        [userContentController addScriptMessageHandler:self name:@"onBizCallback"];
         [userContentController addScriptMessageHandler:self name:@"onFailure"];
         [userContentController addScriptMessageHandler:self name:@"onError"];
         
@@ -206,6 +214,8 @@
     
     if ([message.name isEqualToString:@"onSuccess"]) {
         self.onSuccess(messageBody);
+    }else if ([message.name isEqualToString:@"onBizCallback"]) {
+        self.onBizCallback(messageBody);
     } else if ([message.name isEqualToString:@"onFailure"]) {
         self.onFailure(messageBody);
     } else if ([message.name isEqualToString:@"onError"]) {

@@ -26,7 +26,7 @@
 - (void)handleMethodGetSDKVersion:(FlutterMethodCall*)call
                            result:(FlutterResult)result
 {
-    NSString *sdkVersion = @"1.0.4";
+    NSString *sdkVersion = @"2.0.0";
     
     result(sdkVersion);
 }

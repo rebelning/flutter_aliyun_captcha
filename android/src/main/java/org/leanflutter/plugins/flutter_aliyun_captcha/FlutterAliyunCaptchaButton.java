@@ -3,6 +3,7 @@ package org.leanflutter.plugins.flutter_aliyun_captcha;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Looper;
@@ -10,6 +11,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -42,6 +44,17 @@ class FlutterAliyunCaptchaButtonJsInterface {
             @Override
             public void run() {
                 AliyunCaptchaSender.getInstance().onSuccess(data);
+            }
+        };
+        handler.post(runnable);
+    }
+
+    @JavascriptInterface
+    public void onBizCallback(final String data) {
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                AliyunCaptchaSender.getInstance().onBizCallback(data);
             }
         };
         handler.post(runnable);
@@ -142,7 +155,7 @@ public class FlutterAliyunCaptchaButton
 
         this.webView = new WebView(context);
 
-        this.webView.setBackgroundColor(android.R.color.transparent);
+        this.webView.setBackgroundColor(Color.parseColor("#F2F5FC"));
         this.webView.setWebViewClient(this.webViewClient);
         this.webView.addJavascriptInterface(new FlutterAliyunCaptchaButtonJsInterface(), "messageHandlers");
 
@@ -159,8 +172,8 @@ public class FlutterAliyunCaptchaButton
             this.captchaType = (String) params.get("type");
         if (params.containsKey("optionJsonString"))
             this.captchaOptionJsonString = (String) params.get("optionJsonString");
-        if (params.containsKey("customStyle"))
-            this.captchaCustomStyle = (String) params.get("customStyle");
+//        if (params.containsKey("customStyle"))
+//            this.captchaCustomStyle = (String) params.get("customStyle");
 
         AliyunCaptchaSender.getInstance().listene(new AliyunCaptchaListener() {
             @Override
@@ -240,8 +253,8 @@ public class FlutterAliyunCaptchaButton
                 this.captchaType = (String) params.get("type");
             if (params.containsKey("optionJsonString"))
                 this.captchaOptionJsonString = (String) params.get("optionJsonString");
-            if (params.containsKey("customStyle"))
-                this.captchaCustomStyle = (String) params.get("customStyle");
+//            if (params.containsKey("customStyle"))
+//                this.captchaCustomStyle = (String) params.get("customStyle");
         }
         this.webView.loadUrl("file:///android_asset/" + this.captchaHtmlPath);
         result.success(true);

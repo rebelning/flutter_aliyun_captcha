@@ -38,6 +38,7 @@ viewIdentifier:(int64_t)viewId
 @property (nonatomic, strong) WKWebViewConfiguration * webViewConfiguration;
 
 @property (nonatomic, copy) FlutterAliyunCaptchaButtonCallback onSuccess;
+@property (nonatomic, copy) FlutterAliyunCaptchaButtonCallback onBizCallback;
 @property (nonatomic, copy) FlutterAliyunCaptchaButtonCallback onFailure;
 @property (nonatomic, copy) FlutterAliyunCaptchaButtonCallback onError;
 

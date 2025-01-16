@@ -53,10 +53,17 @@
     <script type="text/javascript">
       const bridgeMethod = (method, data) => {
         if (window.webkit) {
+          // 1. iOS WKWebView 注入的方式：window.webkit.messageHandlers[method].postMessage(...)
+          //   - 需要在 iOS 原生端注入对应的 messageHandler (method同名)
           window.webkit.messageHandlers[method].postMessage(data);
         } else if (window.messageHandlers) {
+          // 2. Android WebView 注入的方式：window.messageHandlers[method](JSON.stringify(data))
+          //   - 需要在 Android 端用 addJavascriptInterface(...) 注入一个 messageHandlers 对象
+          //   - 并且在该对象里实现同名函数：onSuccess() / onFailure() 等
           window.messageHandlers[method](JSON.stringify(data));
+         
         } else {
+          // 3. 如果都不存在，就在控制台输出
           console.log(method, data);
         }
       };
