@@ -240,7 +240,7 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     // width: double.infinity,
                     width: 480,
-                    height: 60,
+                    height: 44,
                     margin: EdgeInsets.only(
                       top: 10,
                       bottom: 10,
