@@ -109,11 +109,10 @@ public class FlutterAliyunCaptchaButton
 
             int widgetHeight = (int) (containerView.getMeasuredHeight() / scale);
 
-            String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s', `%s`);",
+            String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s');",
                     captchaType,
                     widgetHeight,
-                    captchaOptionJsonString,
-                    captchaCustomStyle);
+                    captchaOptionJsonString);
             webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
                 @Override
                 public void onReceiveValue(String value) {
@@ -263,8 +262,14 @@ public class FlutterAliyunCaptchaButton
     }
 
     private void reset(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
-        String jsCode = "window.captcha_button.reset();";
+//        String jsCode = "window.captcha_button.reset();";
+        final float scale = webView.getContext().getResources().getDisplayMetrics().density;
 
+        int widgetHeight = (int) (containerView.getMeasuredHeight() / scale);
+        String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s');",
+                captchaType,
+                widgetHeight,
+                captchaOptionJsonString);
         webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {

@@ -112,7 +112,7 @@
       // 业务请求验证结果回调函数
       const onBizResultCallback = (bizResult) => {
         bridgeOnBizCallback(bizResult);
-        if (bizResult === true) {
+      /**  if (bizResult === true) {
           // 验证通过,调用倒计时
           // this.onCount();
           
@@ -120,9 +120,10 @@
           // 如果业务验证不通过，给出不通过提示
           alert('验证不通过！');
         }
+          */
       }
 
-      const init_old = (type, size = {}, optionJsonString, customStyle) => {
+      const init_old = (type, size = {}, optionJsonString) => {
         let option = JSON.parse(optionJsonString);
         option = Object.assign(option, size, {
           renderTo: "captcha_button",
@@ -167,7 +168,7 @@
         }, 100);
       };
      
-      const init = (type, size = {}, optionJsonString, customStyle) => {
+      const init = (type, size = {}, optionJsonString) => {
         let option = JSON.parse(optionJsonString);
         window.initAliyunCaptcha({
           SceneId: option.sceneId, // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
