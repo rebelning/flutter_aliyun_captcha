@@ -78,13 +78,13 @@
         this.captcha = instance;
       }
 
-      function captchaVerifyCallback(captchaVerifyParam) {
+      const captchaVerifyCallback = async (captchaVerifyParam) => {
         try {
           let data = JSON.parse(captchaVerifyParam);
           bridgeOnSuccess(data);
           // 2秒后返回验证结果
           // 调后端发短信接口  带着参数
-         /** await new Promise((resolve) => setTimeout(resolve, 2000));
+          await new Promise((resolve) => setTimeout(resolve, 3000));
           const res = {
             code: 0,
           };
@@ -95,10 +95,10 @@
               bizResult: true,
             };
           }
-          */
+          
           return {
-            captchaResult: true,
-            bizResult: true,
+            captchaResult: false,
+            bizResult: false,
           };
         } catch (err) {
           bridgeOnError(err);
@@ -110,7 +110,7 @@
       };
 
       // 业务请求验证结果回调函数
-      function onBizResultCallback(bizResult)  {
+      const onBizResultCallback = (bizResult) => {
         bridgeOnBizCallback(bizResult);
       /**  if (bizResult === true) {
           // 验证通过,调用倒计时
