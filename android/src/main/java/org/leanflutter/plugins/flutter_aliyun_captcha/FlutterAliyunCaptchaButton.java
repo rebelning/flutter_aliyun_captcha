@@ -34,16 +34,15 @@ import io.flutter.plugin.common.MethodChannel;
 import io.flutter.plugin.platform.PlatformView;
 
 import static org.leanflutter.plugins.flutter_aliyun_captcha.Constants.ALIYUN_CAPTCHA_BUTTON_CHANNEL_NAME;
-import static org.leanflutter.plugins.flutter_aliyun_captcha.Constants.ALIYUN_CAPTCHA_BUTTON_EVENT_CHANNEL_NAME;
 
 class FlutterAliyunCaptchaButtonJsInterface {
     private Handler handler = new Handler(Looper.getMainLooper());
-    private MethodChannel methodChannel;
 
     // 构造函数，传入 MethodChannel
-    public FlutterAliyunCaptchaButtonJsInterface(MethodChannel methodChannel) {
-        this.methodChannel = methodChannel;
+    public FlutterAliyunCaptchaButtonJsInterface() {
+
     }
+
     @JavascriptInterface
     public void onSuccess(final String data) {
         Runnable runnable = new Runnable() {
@@ -53,7 +52,6 @@ class FlutterAliyunCaptchaButtonJsInterface {
             }
         };
         handler.post(runnable);
-//        handler.post(() -> notifyFlutterAndAwaitResult("onSuccess", data));
     }
 
     @JavascriptInterface
@@ -92,16 +90,16 @@ class FlutterAliyunCaptchaButtonJsInterface {
 }
 
 public class FlutterAliyunCaptchaButton
-        implements PlatformView, MethodChannel.MethodCallHandler, EventChannel.StreamHandler {
+        implements PlatformView, MethodChannel.MethodCallHandler {
     private final MethodChannel methodChannel;
-    private final EventChannel eventChannel;
+//    private final EventChannel eventChannel;
 
-    private EventChannel.EventSink eventSink;
+//    private EventChannel.EventSink eventSink;
 
     private String captchaHtmlPath;
-    private String captchaType;
+    //    private String captchaType;
     private String captchaOptionJsonString;
-    private String captchaCustomStyle;
+//    private String captchaCustomStyle;
 
     private FrameLayout containerView;
     private WebView webView;
@@ -116,9 +114,8 @@ public class FlutterAliyunCaptchaButton
 
             int widgetHeight = (int) (containerView.getMeasuredHeight() / scale);
 
-            String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s');",
-                    captchaType,
-                    widgetHeight,
+            String jsCode = String.format("window._init('%s');",
+//                    widgetHeight,
                     captchaOptionJsonString);
             webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
                 @Override
@@ -144,12 +141,12 @@ public class FlutterAliyunCaptchaButton
             int viewId,
             Map<String, Object> params,
             String captchaHtmlPath) {
-        Log.d("channel","channel name="+ALIYUN_CAPTCHA_BUTTON_CHANNEL_NAME + "_" + viewId);
+        Log.d("channel", "channel name=" + ALIYUN_CAPTCHA_BUTTON_CHANNEL_NAME + "_" + viewId);
         methodChannel = new MethodChannel(messenger, ALIYUN_CAPTCHA_BUTTON_CHANNEL_NAME + "_" + viewId);
         methodChannel.setMethodCallHandler(this);
 
-        eventChannel = new EventChannel(messenger, ALIYUN_CAPTCHA_BUTTON_EVENT_CHANNEL_NAME + "_" + viewId);
-        eventChannel.setStreamHandler(this);
+//        eventChannel = new EventChannel(messenger, ALIYUN_CAPTCHA_BUTTON_EVENT_CHANNEL_NAME + "_" + viewId);
+//        eventChannel.setStreamHandler(this);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT,
@@ -165,19 +162,23 @@ public class FlutterAliyunCaptchaButton
 
         this.webView.setBackgroundColor(Color.parseColor("#F2F5FC"));
         this.webView.setWebViewClient(this.webViewClient);
-        this.webView.addJavascriptInterface(new FlutterAliyunCaptchaButtonJsInterface(methodChannel), "messageHandlers");
-
+        this.webView.addJavascriptInterface(new FlutterAliyunCaptchaButtonJsInterface(), "messageHandlers");
         this.webSettings = this.webView.getSettings();
         this.webSettings.setJavaScriptEnabled(true);
         this.webSettings.setAllowFileAccessFromFileURLs(true);
         this.webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+        this.webSettings.setDomStorageEnabled(true);
+        // 设置屏幕自适应
+        this.webSettings.setUseWideViewPort(true);
+        this.webSettings.setLoadWithOverviewMode(true);
+        this.webSettings.setCacheMode(WebSettings.LOAD_NO_CACHE);
         this.webView.requestFocus();
         this.containerView.addView(webView);
 
         this.captchaHtmlPath = captchaHtmlPath;
 
-        if (params.containsKey("type"))
-            this.captchaType = (String) params.get("type");
+//        if (params.containsKey("type"))
+//            this.captchaType = (String) params.get("type");
         if (params.containsKey("optionJsonString"))
             this.captchaOptionJsonString = (String) params.get("optionJsonString");
 //        if (params.containsKey("customStyle"))
@@ -186,13 +187,13 @@ public class FlutterAliyunCaptchaButton
         AliyunCaptchaSender.getInstance().listene(new AliyunCaptchaListener() {
             @Override
             public void onSuccess(String data) {
-                Log.d("data=","onSuccess="+data);
+                Log.d("data=", "onSuccess=" + data);
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onSuccess");
 //                result.put("data", convertMsgToMap(data));
-                result.put("data",data);
+                result.put("data", data);
 //                eventSink.success(result);
-                notifyFlutterAndAwaitResult("onSuccess",result,true);
+                notifyFlutterAndAwaitResult("onSuccess", result, true);
             }
 
             @Override
@@ -200,9 +201,9 @@ public class FlutterAliyunCaptchaButton
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onBizCallback");
 //                result.put("data", convertMsgToMap(data));
-                result.put("data",data);
+                result.put("data", data);
 //                eventSink.success(result);
-                notifyFlutterAndAwaitResult("onBizCallback",result,false);
+                notifyFlutterAndAwaitResult("onBizCallback", result, false);
             }
 
             @Override
@@ -210,9 +211,9 @@ public class FlutterAliyunCaptchaButton
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onFailure");
 //                result.put("data", convertMsgToMap(data));
-                result.put("data",data);
+                result.put("data", data);
 //                eventSink.success(result);
-                notifyFlutterAndAwaitResult("onFailure",result,false);
+                notifyFlutterAndAwaitResult("onFailure", result, false);
             }
 
             @Override
@@ -220,24 +221,26 @@ public class FlutterAliyunCaptchaButton
                 final Map<String, Object> result = new HashMap<>();
                 result.put("method", "onError");
 //                result.put("data", convertMsgToMap(data));
-                result.put("data",data);
-                Log.d("onError",data);
+                result.put("data", data);
+                Log.d("onError", data);
 //                eventSink.success(result);
-                notifyFlutterAndAwaitResult("onError",result,false);
+                notifyFlutterAndAwaitResult("onError", result, false);
             }
         });
     }
-    private void notifyFlutterAndAwaitResult(String method,Map<String, Object> result,boolean isCallback) {
+
+    private void notifyFlutterAndAwaitResult(String method, Map<String, Object> result, boolean isCallback) {
         // 通知 Flutter，并等待返回值
         methodChannel.invokeMethod(method, result, new MethodChannel.Result() {
             @Override
             public void success(Object result) {
                 // Flutter 返回成功，通知 AliyunCaptchaSender
-                Log.d("invokeMethod","result"+result);
-                if(isCallback){
+                Log.d("invokeMethod", "result" + result);
+                if (isCallback) {
                     callOnNativeSuccessCallback(result.toString());
                 }
             }
+
             @Override
             public void error(String errorCode, String errorMessage, Object errorDetails) {
                 // Flutter 返回错误，通知 AliyunCaptchaSender
@@ -251,17 +254,19 @@ public class FlutterAliyunCaptchaButton
 
 
     }
+
     private void callOnNativeSuccessCallback(String response) {
         // 将 response 转换为 JSON 格式的字符串
 //        String jsCode = String.format("window.onNativeSuccessCallback(%s);", response);
         String jsCode = String.format("window.onNativeSuccessCallback('%s');",
                 response);
         // 调用 JavaScript
-         webView.evaluateJavascript(jsCode, value -> {
+        webView.evaluateJavascript(jsCode, value -> {
             // 处理 JavaScript 执行后的返回值
             Log.d("JS Execution", "Result: " + value);
         });
     }
+
     @Override
     public View getView() {
         return containerView;
@@ -270,16 +275,6 @@ public class FlutterAliyunCaptchaButton
     @Override
     public void dispose() {
 
-    }
-
-    @Override
-    public void onListen(Object args, EventChannel.EventSink eventSink) {
-        this.eventSink = eventSink;
-    }
-
-    @Override
-    public void onCancel(Object args) {
-        this.eventSink = null;
     }
 
     @Override
@@ -296,8 +291,8 @@ public class FlutterAliyunCaptchaButton
     private void refresh(@NonNull MethodCall call, @NonNull MethodChannel.Result result) {
         if (call.arguments != null) {
             Map<String, Object> params = (Map<String, Object>) call.arguments;
-            if (params.containsKey("type"))
-                this.captchaType = (String) params.get("type");
+//            if (params.containsKey("type"))
+//                this.captchaType = (String) params.get("type");
             if (params.containsKey("optionJsonString"))
                 this.captchaOptionJsonString = (String) params.get("optionJsonString");
 //            if (params.containsKey("customStyle"))
@@ -313,12 +308,15 @@ public class FlutterAliyunCaptchaButton
 
         int widgetHeight = (int) (containerView.getMeasuredHeight() / scale);
 
-        String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s');",
-                captchaType,
-                widgetHeight,
+//        String jsCode = String.format("window._init('%s', {\"height\":%d}, '%s');",
+//                captchaType,
+//                widgetHeight,
+//                captchaOptionJsonString);
+        String jsCode = String.format("window._init('%s');",
+//                widgetHeight,
                 captchaOptionJsonString);
 
-        webView.post(()->webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
+        webView.post(() -> webView.evaluateJavascript(jsCode, new ValueCallback<String>() {
             @Override
             public void onReceiveValue(String value) {
             }

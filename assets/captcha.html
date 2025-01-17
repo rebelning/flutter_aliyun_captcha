@@ -144,7 +144,7 @@
 
      
      
-      const init = (type, size = {}, optionJsonString) => {
+      const init = (optionJsonString) => {
        
         let option = JSON.parse(optionJsonString);
         window.initAliyunCaptcha({
@@ -157,13 +157,13 @@
           onBizResultCallback: onBizResultCallback, // 业务请求结果回调函数，无需修改
           getInstance: getInstance, // 绑定验证码实例函数，无需修改
           slideStyle: {
-            width: 326,
-            height: 40,
+            width: option.width || 328,
+            height: option.height || 40,
           }, // 滑块验���码样式，支持自定义宽度和高度，单位为px。其中，width最小值为320 px
           language: 'cn', // 验证码语言类型，支持简体中文（cn）、繁体中文（tw）、英文（en）
           immediate: true,
           autoRefresh:false,
-          timeout:70000,
+          timeout:option.timeout || 70000,
           region: 'cn', // 验证码示例所属地区，支持中国内地（cn）、新加坡（sgp）
         });
       }

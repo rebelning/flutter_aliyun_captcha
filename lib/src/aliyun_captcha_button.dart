@@ -75,9 +75,9 @@ class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
   Map<String, dynamic> get creationParams {
     AliyunCaptchaOption option = widget.option!;
     Map<String, dynamic> creationParams = {
-      'type': widget.type!.toValue(),
+      // 'type': widget.type!.toValue(),
       'optionJsonString': json.encode(option),
-      'customStyle': widget.customStyle,
+      // 'customStyle': widget.customStyle,
     };
     return creationParams;
   }

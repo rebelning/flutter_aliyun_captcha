@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -253,6 +254,9 @@ class _HomePageState extends State<HomePage> {
                       option: AliyunCaptchaOption(
                         sceneId: '',
                         prefix: '',
+                        timeout: 70000,
+                        height: 40,
+                        width: Platform.isAndroid == true ? 326 : 382,
                       ),
                       onSuccess: (String? data) async {
                         // {"sig": "...", "token": "..."}

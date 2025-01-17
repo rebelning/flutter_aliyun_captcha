@@ -3,6 +3,9 @@
 class AliyunCaptchaOption {
   String? sceneId;
   String? prefix;
+  int? timeout;
+  int? width;
+  int? height;
   // // String? language;
   // // int? fontSize;
   // // bool? hideErrorCode;
@@ -12,6 +15,9 @@ class AliyunCaptchaOption {
   AliyunCaptchaOption({
     this.sceneId,
     this.prefix,
+    this.timeout,
+    this.width,
+    this.height,
     // this.language,
     // this.fontSize,
     // this.hideErrorCode,
@@ -20,9 +26,12 @@ class AliyunCaptchaOption {
   });
 
   Map<String, dynamic> toJson() {
-    Map<String, dynamic> jsonObject = Map<String, dynamic>();
-    if (sceneId != null) jsonObject.putIfAbsent("sceneId", () => sceneId);
-    if (prefix != null) jsonObject.putIfAbsent("prefix", () => prefix);
+    Map<String, dynamic> json = Map<String, dynamic>();
+    if (sceneId != null) json.putIfAbsent("sceneId", () => sceneId);
+    if (prefix != null) json.putIfAbsent("prefix", () => prefix);
+    if (timeout != null) json.putIfAbsent("timeout", () => timeout);
+    if (width != null) json.putIfAbsent("width", () => width);
+    if (height != null) json.putIfAbsent("height", () => height);
     // if (language != null) jsonObject.putIfAbsent("language", () => language);
     // if (fontSize != null) jsonObject.putIfAbsent("fontSize", () => fontSize);
     // if (hideErrorCode != null)
@@ -30,6 +39,6 @@ class AliyunCaptchaOption {
     // if (upLang != null) jsonObject.putIfAbsent("upLang", () => upLang);
     // if (test != null) jsonObject.putIfAbsent("test", () => test);
 
-    return jsonObject;
+    return json;
   }
 }

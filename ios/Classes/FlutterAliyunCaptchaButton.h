@@ -12,7 +12,7 @@ NS_ASSUME_NONNULL_BEGIN
 typedef void (^FlutterAliyunCaptchaButtonCallback)(NSDictionary *data);
 
 // FlutterAliyunCaptchaButtonController
-@interface FlutterAliyunCaptchaButtonController : NSObject <FlutterPlatformView, FlutterStreamHandler>
+@interface FlutterAliyunCaptchaButtonController : NSObject <FlutterPlatformView>
 
 - (instancetype)initWithFrame:(CGRect)frame
 viewIdentifier:(int64_t)viewId
@@ -31,9 +31,9 @@ viewIdentifier:(int64_t)viewId
 // FlutterAliyunCaptchaButton
 @interface FlutterAliyunCaptchaButton : UIView <WKScriptMessageHandler, WKNavigationDelegate, WKUIDelegate>
 @property (nonatomic, strong) NSString* captchaHtmlPath;
-@property (nonatomic, strong) NSString* captchaType;
+//@property (nonatomic, strong) NSString* captchaType;
 @property (nonatomic, strong) NSString* captchaOptionJsonString;
-@property (nonatomic, strong) NSString* captchaCustomStyle;
+//@property (nonatomic, strong) NSString* captchaCustomStyle;
 @property (nonatomic, strong) WKWebView* webView;
 @property (nonatomic, strong) WKWebViewConfiguration * webViewConfiguration;
 
@@ -44,6 +44,9 @@ viewIdentifier:(int64_t)viewId
 
 - (instancetype)initWithArguments:(id _Nullable)args;
 - (void)refresh:(id _Nullable)args;
+- (void)reset;
+- (void)callOnNativeSuccessCallback:(NSString *)response;
+
 @end
 
 NS_ASSUME_NONNULL_END

@@ -12,8 +12,8 @@
     FlutterAliyunCaptchaButton* _aliyunCaptchaButton;
     int64_t _viewId;
     FlutterMethodChannel* _channel;
-    FlutterEventChannel* _eventChannel;
-    FlutterEventSink _eventSink;
+//    FlutterEventChannel* _eventChannel;
+//    FlutterEventSink _eventSink;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -26,10 +26,10 @@
         NSString* channelName = [NSString stringWithFormat:@"leanflutter.org/aliyun_captcha_button/channel_%lld", viewId];
         _channel = [FlutterMethodChannel methodChannelWithName:channelName binaryMessenger:messenger];
         
-        NSString* eventChannelName = [NSString stringWithFormat:@"leanflutter.org/aliyun_captcha_button/event_channel_%lld", viewId];
-        _eventChannel = [FlutterEventChannel eventChannelWithName:eventChannelName
-                                                  binaryMessenger:messenger];
-        [_eventChannel setStreamHandler:self];
+//        NSString* eventChannelName = [NSString stringWithFormat:@"leanflutter.org/aliyun_captcha_button/event_channel_%lld", viewId];
+//        _eventChannel = [FlutterEventChannel eventChannelWithName:eventChannelName
+//                                                  binaryMessenger:messenger];
+//        [_eventChannel setStreamHandler:self];
         
         __weak __typeof__(self) weakSelf = self;
         [_channel setMethodCallHandler:^(FlutterMethodCall* call, FlutterResult result) {
@@ -38,52 +38,83 @@
         
         _aliyunCaptchaButton = [[FlutterAliyunCaptchaButton alloc] initWithArguments:args];
         _aliyunCaptchaButton.onSuccess = ^(NSDictionary * _Nonnull data) {
-            NSDictionary<NSString *, id> *eventData = @{
+            NSString *dataString = [data description];
+            NSDictionary<NSString *, id> *result = @{
                 @"method": @"onSuccess",
-                @"data": data ?: @"",
+                @"data": dataString ?: @"",
             };
-            self->_eventSink(eventData);
+//            self->_eventSink(eventData);
+            [weakSelf notifyFlutterAndAwaitResult:@"onSuccess" data:result isCallback:YES];
+
         };
         _aliyunCaptchaButton.onBizCallback = ^(NSDictionary * _Nonnull data) {
-            NSDictionary<NSString *, id> *eventData = @{
+            NSString *dataString = [data description];
+            BOOL biz = [dataString isEqualToString:@"1"]; // 检查是否等于 "1"
+            NSDictionary<NSString *, id> *result = @{
                 @"method": @"onBizCallback",
-                @"data": data ?: @"",
+                @"data": biz ? @"true" : @"false" // 根据 BOOL 值返回对应的字符串
             };
-            self->_eventSink(eventData);
+//            self->_eventSink(eventData);
+            [weakSelf notifyFlutterAndAwaitResult:@"onBizCallback" data:result isCallback:NO];
+
         };
         _aliyunCaptchaButton.onFailure = ^(NSDictionary * _Nonnull data) {
-            NSDictionary<NSString *, id> *eventData = @{
+            NSString *dataString = [data description];
+            NSDictionary<NSString *, id> *result = @{
                 @"method": @"onFailure",
-                @"data": data ?: @"",
+                @"data": dataString ?: @"",
             };
-            self->_eventSink(eventData);
+//            self->_eventSink(eventData);
+            [weakSelf notifyFlutterAndAwaitResult:@"onFailure" data:result isCallback:NO];
+
         };
         _aliyunCaptchaButton.onError = ^(NSDictionary * _Nonnull data) {
-            NSDictionary<NSString *, id> *eventData = @{
+            NSString *dataString = [data description];
+            NSDictionary<NSString *, id> *result = @{
                 @"method": @"onError",
-                @"data": data ?: @"",
+                @"data": dataString ?: @"",
             };
-            self->_eventSink(eventData);
+//            self->_eventSink(eventData);
+            [weakSelf notifyFlutterAndAwaitResult:@"onError" data:result isCallback:NO];
+
         };
     }
     return self;
+}
+
+- (void)notifyFlutterAndAwaitResult:(NSString *)method
+                               data:(NSDictionary *)data
+                        isCallback:(BOOL)isCallback {
+    [_channel invokeMethod:method arguments:data result:^(id  _Nullable flutterResult) {
+        if (flutterResult) {
+            NSLog(@"Flutter returned result for method %@: %@", method, flutterResult);
+            if (isCallback && [method isEqualToString:@"onSuccess"]) {
+                [self callOnNativeSuccessCallback:flutterResult];
+            }
+        } else {
+            NSLog(@"Flutter did not return a result for method %@", method);
+        }
+    }];
+}
+- (void)callOnNativeSuccessCallback:(NSString *)response {
+    [_aliyunCaptchaButton callOnNativeSuccessCallback:response];
 }
 
 - (UIView*)view {
     return _aliyunCaptchaButton;
 }
 
-- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
-    _eventSink = eventSink;
-    
-    return nil;
-}
-
-- (FlutterError*)onCancelWithArguments:(id)arguments {
-    _eventSink = nil;
-    
-    return nil;
-}
+//- (FlutterError*)onListenWithArguments:(id)arguments eventSink:(FlutterEventSink)eventSink {
+//    _eventSink = eventSink;
+//    
+//    return nil;
+//}
+//
+//- (FlutterError*)onCancelWithArguments:(id)arguments {
+//    _eventSink = nil;
+//    
+//    return nil;
+//}
 
 - (void)onMethodCall:(FlutterMethodCall*)call result:(FlutterResult)result {
     if ([[call method] isEqualToString:@"refresh"]) {
@@ -103,10 +134,8 @@
 
 - (void)reset:(FlutterMethodCall*)call
        result:(FlutterResult)result {
-    NSString *jsCode = @"window.captcha_button.reset();";
-    [_aliyunCaptchaButton.webView evaluateJavaScript:jsCode completionHandler:^(id response, NSError * _Nullable error) {
-        result([NSNumber numberWithBool:YES]);
-    }];
+    [_aliyunCaptchaButton reset];
+    result([NSNumber numberWithBool:YES]);
 }
 
 @end
@@ -162,9 +191,9 @@
         NSString* captchaHtmlKey = [FlutterDartProject lookupKeyForAsset:@"assets/captcha.html" fromPackage:@"flutter_aliyun_captcha"];
         NSString* captchaHtmlPath = [[NSBundle mainBundle] pathForResource:captchaHtmlKey ofType:nil];
         self.captchaHtmlPath = captchaHtmlPath;
-        self.captchaType = args[@"type"];
+//        self.captchaType = args[@"type"];
         self.captchaOptionJsonString = args[@"optionJsonString"];
-        self.captchaCustomStyle = args[@"customStyle"];
+//        self.captchaCustomStyle = args[@"customStyle"];
     }
     return self;
 }
@@ -178,9 +207,9 @@
 
 - (void)refresh:(id _Nullable)args {
     if (args != nil) {
-        self.captchaType = args[@"type"];
+//        self.captchaType = args[@"type"];
         self.captchaOptionJsonString = args[@"optionJsonString"];
-        self.captchaCustomStyle = args[@"customStyle"];
+//        self.captchaCustomStyle = args[@"customStyle"];
     }
     
     NSURL* url = [NSURL fileURLWithPath:self.captchaHtmlPath];
@@ -189,19 +218,67 @@
     }
 }
 
--(WKWebViewConfiguration*) webViewConfiguration {
+- (void)reset {
+//    NSString *jsCode = @"window.captcha_button.reset();";
+//    NSString *jsCode = [NSString stringWithFormat:@"window._init('%@', {\"height\":%f}, '%@');",
+    NSString *jsCode = [NSString stringWithFormat:@"window._init('%@');",
+//                        self.frame.size.height,
+                        self.captchaOptionJsonString];
+    [self.webView evaluateJavaScript:jsCode completionHandler:^(id _Nullable response, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"JavaScript execution error in reset: %@", error.localizedDescription);
+        } else {
+            NSLog(@"JavaScript reset executed successfully.");
+        }
+    }];
+}
+
+- (void)callOnNativeSuccessCallback:(NSString *)response {
+    NSLog(@"Native received success callback from Flutter: %@", response);
+
+    // 生成 JavaScript 代码
+    NSString *jsCode = [NSString stringWithFormat:@"window.onNativeSuccessCallback('%@');", response];
+
+    // 调用 JavaScript
+    [self.webView evaluateJavaScript:jsCode completionHandler:^(id _Nullable result, NSError * _Nullable error) {
+        if (error) {
+            NSLog(@"JavaScript execution error: %@", error.localizedDescription);
+        } else {
+            NSLog(@"JavaScript execution result: %@", result);
+        }
+    }];
+}
+
+
+
+- (WKWebViewConfiguration *)webViewConfiguration {
     if (!_webViewConfiguration) {
-        // Create WKWebViewConfiguration instance
-        _webViewConfiguration = [[WKWebViewConfiguration alloc]init];
+        // 创建 WKWebViewConfiguration 实例
+        _webViewConfiguration = [[WKWebViewConfiguration alloc] init];
         
-        WKUserContentController* userContentController = [[WKUserContentController alloc] init];
+        // 创建 WKUserContentController 实例
+        WKUserContentController *userContentController = [[WKUserContentController alloc] init];
+        
+        // 添加页面自适应缩放的 JavaScript
+        NSString *javascript = @"var meta = document.createElement('meta');"
+                                "meta.setAttribute('name', 'viewport');"
+                                "meta.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');"
+                                "document.getElementsByTagName('head')[0].appendChild(meta);";
+        WKUserScript *userScript = [[WKUserScript alloc] initWithSource:javascript
+                                                         injectionTime:WKUserScriptInjectionTimeAtDocumentEnd
+                                                      forMainFrameOnly:YES];
+        [userContentController addUserScript:userScript];
+        
+        // 添加 JavaScript 调用原生的接口
         [userContentController addScriptMessageHandler:self name:@"onSuccess"];
         [userContentController addScriptMessageHandler:self name:@"onBizCallback"];
         [userContentController addScriptMessageHandler:self name:@"onFailure"];
         [userContentController addScriptMessageHandler:self name:@"onError"];
         
+        // 设置 UserContentController
         _webViewConfiguration.userContentController = userContentController;
         
+        // 配置 JavaScript 设置
         _webViewConfiguration.preferences.javaScriptEnabled = YES;
         _webViewConfiguration.preferences.javaScriptCanOpenWindowsAutomatically = YES;
     }
@@ -225,11 +302,9 @@
 
 #pragma mark - WKNavigationDelegate
 - (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
-    NSString *jsCode = [NSString stringWithFormat:@"window._init('%@', {\"height\":%f}, '%@', `%@`);",
-                        self.captchaType,
-                        self.frame.size.height,
-                        self.captchaOptionJsonString,
-                        self.captchaCustomStyle];
+    NSString *jsCode = [NSString stringWithFormat:@"window._init('%@');",
+//                        self.frame.size.height,
+                        self.captchaOptionJsonString];
     [self.webView evaluateJavaScript:jsCode completionHandler:^(id response, NSError * _Nullable error) {
         // skip
     }];
