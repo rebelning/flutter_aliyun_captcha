@@ -60,7 +60,7 @@
           // 2. Android WebView 注入的方式：window.messageHandlers[method](JSON.stringify(data))
           //   - 需要在 Android 端用 addJavascriptInterface(...) 注入一个 messageHandlers 对象
           //   - 并且在该对象里实现同名函数：onSuccess() / onFailure() 等
-          let data = JSON.parse(captchaVerifyParam);
+          
           window.messageHandlers[method](JSON.stringify(data));
          
         } else {
@@ -81,17 +81,17 @@
       const bridgeOnSuccess = (data) => {
         return new Promise((resolve, reject) => {
           try {
-            console.log("bridgeOnSuccess","1111111111111111" ); 
+           
             // 通知原生，并设置一个临时全局回调函数
             window.onNativeSuccessCallback = (response) => {
               
               //console.log("onNativeSuccessCallback", response);
-              console.log("bridgeOnSuccess-33333333333",JSON.stringify(response) );  
               resolve(response); // 原生返回结果后，resolve Promise
             };
-            console.log("bridgeOnSuccess","2222222222222222222" );  
+           
             // 调用原生方法
-            bridgeMethod("onSuccess", data);
+            let result = JSON.parse(data);
+            bridgeMethod("onSuccess", result);
           } catch (err) {
             reject(err); // 如果出现异常，reject Promise
           }
@@ -102,9 +102,9 @@
          // let data = JSON.parse(captchaVerifyParam);
           // 等待原生返回结果
           const nativeResponse = await bridgeOnSuccess(captchaVerifyParam);
-          console.log("bridgeOnSuccess-4444444444444",nativeResponse);
+          
           let nativeRes = JSON.parse(nativeResponse); 
-          console.log("bridgeOnSuccess-5555555555555",nativeRes.code); 
+          
          
 
           // 根据原生返回结果判断业务逻辑
@@ -123,7 +123,7 @@
           bridgeOnError(err);
           return {
             captchaResult: false,
-            bizResult: 'false',
+            bizResult: false,
           };
         }
       };
