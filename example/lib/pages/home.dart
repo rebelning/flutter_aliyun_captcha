@@ -250,7 +250,6 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: AliyunCaptchaButton(
                       controller: _captchaController,
-                      type: _captchaType,
                       option: AliyunCaptchaOption(
                         sceneId: '',
                         prefix: '',

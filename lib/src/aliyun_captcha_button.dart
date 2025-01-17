@@ -10,14 +10,13 @@ import 'package:flutter_aliyun_captcha/src/aliyun_captcha_handler.dart';
 
 import 'aliyun_captcha_controller.dart';
 import 'aliyun_captcha_option.dart';
-import 'aliyun_captcha_type.dart';
 import 'constants.dart';
 
 class AliyunCaptchaButton extends StatefulWidget {
   final AliyunCaptchaController? controller;
-  final AliyunCaptchaType? type;
+
   final AliyunCaptchaOption? option;
-  final String? customStyle;
+
   final Future<String?> Function(String? data)? onSuccess;
   final Function(String? data)? onBizCallback;
   final Function(String? failCode)? onFailure;
@@ -26,9 +25,7 @@ class AliyunCaptchaButton extends StatefulWidget {
   AliyunCaptchaButton({
     Key? key,
     this.controller,
-    this.type,
     this.option,
-    this.customStyle,
     this.onSuccess,
     this.onBizCallback,
     this.onFailure,
@@ -61,16 +58,16 @@ class _AliyunCaptchaButtonState extends State<AliyunCaptchaButton> {
     super.initState();
   }
 
-  @override
-  void didUpdateWidget(oldWidget) {
-    super.didUpdateWidget(oldWidget);
+  // @override
+  // void didUpdateWidget(oldWidget) {
+  //   super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.type != widget.type ||
-        json.encode(oldWidget.option) != json.encode(widget.option) ||
-        oldWidget.customStyle != widget.customStyle) {
-      captchaController!.refresh(creationParams);
-    }
-  }
+  //   if (oldWidget.type != widget.type ||
+  //       json.encode(oldWidget.option) != json.encode(widget.option) ||
+  //       oldWidget.customStyle != widget.customStyle) {
+  //     captchaController!.refresh(creationParams);
+  //   }
+  // }
 
   Map<String, dynamic> get creationParams {
     AliyunCaptchaOption option = widget.option!;
