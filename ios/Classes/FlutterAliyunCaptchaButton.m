@@ -40,7 +40,7 @@
         _aliyunCaptchaButton.onSuccess = ^(NSString * _Nonnull data) {
 //            NSString *dataString = [data description];
 //            NSLog(@"_aliyunCaptchaButton.onSuccess  dataString %@", dataString);
-            NSString *quotedDataString = [NSString stringWithFormat:@"\"%@\"", data ?: @""];
+            NSString *quotedDataString = [NSString stringWithFormat:@"%@", data ?: @""];
 //            NSLog(@"_aliyunCaptchaButton.onSuccess quotedDataString %@", quotedDataString);
             NSDictionary<NSString *, id> *result = @{
                 @"method": @"onSuccess",
