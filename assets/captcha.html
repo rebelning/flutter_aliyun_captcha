@@ -60,9 +60,13 @@
           // 2. Android WebView 注入的方式：window.messageHandlers[method](JSON.stringify(data))
           //   - 需要在 Android 端用 addJavascriptInterface(...) 注入一个 messageHandlers 对象
           //   - 并且在该对象里实现同名函数：onSuccess() / onFailure() 等
+          if(method==="onSuccess"){
+            let result = JSON.parse(data);
+            window.messageHandlers[method](JSON.stringify(result));
+          }else{
+            window.messageHandlers[method](JSON.stringify(data));
+          }
           
-          window.messageHandlers[method](JSON.stringify(data));
-         
         } else {
           // 3. 如果都不存在，就在控制台输出
           console.log(method, data);
@@ -90,7 +94,7 @@
             };
            
             // 调用原生方法
-            let result = JSON.parse(data);
+            
             bridgeMethod("onSuccess", result);
           } catch (err) {
             reject(err); // 如果出现异常，reject Promise
