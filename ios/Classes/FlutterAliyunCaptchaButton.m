@@ -39,9 +39,12 @@
         _aliyunCaptchaButton = [[FlutterAliyunCaptchaButton alloc] initWithArguments:args];
         _aliyunCaptchaButton.onSuccess = ^(NSDictionary * _Nonnull data) {
             NSString *dataString = [data description];
+//            NSLog(@"_aliyunCaptchaButton.onSuccess  dataString %@", dataString);
+            NSString *quotedDataString = [NSString stringWithFormat:@"\"%@\"", dataString ?: @""];
+//            NSLog(@"_aliyunCaptchaButton.onSuccess quotedDataString %@", quotedDataString);
             NSDictionary<NSString *, id> *result = @{
                 @"method": @"onSuccess",
-                @"data": dataString ?: @"",
+                @"data": quotedDataString,
             };
 //            self->_eventSink(eventData);
             [weakSelf notifyFlutterAndAwaitResult:@"onSuccess" data:result isCallback:YES];
