@@ -93,9 +93,8 @@
               resolve(response); // 原生返回结果后，resolve Promise
             };
            
-            // 调用原生方法
-            
-            bridgeMethod("onSuccess", result);
+            // 调用原生方法 
+            bridgeMethod("onSuccess", data);
           } catch (err) {
             reject(err); // 如果出现异常，reject Promise
           }
@@ -109,8 +108,6 @@
           
           let nativeRes = JSON.parse(nativeResponse); 
           
-         
-
           // 根据原生返回结果判断业务逻辑
           if (nativeRes.code === 0) {
             return {
