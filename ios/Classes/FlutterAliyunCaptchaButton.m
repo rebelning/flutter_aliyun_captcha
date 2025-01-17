@@ -37,10 +37,10 @@
         }];
         
         _aliyunCaptchaButton = [[FlutterAliyunCaptchaButton alloc] initWithArguments:args];
-        _aliyunCaptchaButton.onSuccess = ^(NSDictionary * _Nonnull data) {
-            NSString *dataString = [data description];
+        _aliyunCaptchaButton.onSuccess = ^(NSString * _Nonnull data) {
+//            NSString *dataString = [data description];
 //            NSLog(@"_aliyunCaptchaButton.onSuccess  dataString %@", dataString);
-            NSString *quotedDataString = [NSString stringWithFormat:@"\"%@\"", dataString ?: @""];
+            NSString *quotedDataString = [NSString stringWithFormat:@"\"%@\"", data ?: @""];
 //            NSLog(@"_aliyunCaptchaButton.onSuccess quotedDataString %@", quotedDataString);
             NSDictionary<NSString *, id> *result = @{
                 @"method": @"onSuccess",
@@ -50,7 +50,7 @@
             [weakSelf notifyFlutterAndAwaitResult:@"onSuccess" data:result isCallback:YES];
 
         };
-        _aliyunCaptchaButton.onBizCallback = ^(NSDictionary * _Nonnull data) {
+        _aliyunCaptchaButton.onBizCallback = ^(NSString * _Nonnull data) {
             NSString *dataString = [data description];
             BOOL biz = [dataString isEqualToString:@"1"]; // 检查是否等于 "1"
             NSDictionary<NSString *, id> *result = @{
@@ -61,7 +61,7 @@
             [weakSelf notifyFlutterAndAwaitResult:@"onBizCallback" data:result isCallback:NO];
 
         };
-        _aliyunCaptchaButton.onFailure = ^(NSDictionary * _Nonnull data) {
+        _aliyunCaptchaButton.onFailure = ^(NSString * _Nonnull data) {
             NSString *dataString = [data description];
             NSDictionary<NSString *, id> *result = @{
                 @"method": @"onFailure",
@@ -71,7 +71,7 @@
             [weakSelf notifyFlutterAndAwaitResult:@"onFailure" data:result isCallback:NO];
 
         };
-        _aliyunCaptchaButton.onError = ^(NSDictionary * _Nonnull data) {
+        _aliyunCaptchaButton.onError = ^(NSString * _Nonnull data) {
             NSString *dataString = [data description];
             NSDictionary<NSString *, id> *result = @{
                 @"method": @"onError",
@@ -164,9 +164,9 @@
                                    viewIdentifier:(int64_t)viewId
                                         arguments:(id _Nullable)args {
     FlutterAliyunCaptchaButtonController* aliyunCaptchaButtonController = [[FlutterAliyunCaptchaButtonController alloc] initWithFrame:frame
-                                                                                                                       viewIdentifier:viewId
-                                                                                                                            arguments:args
-                                                                                                                      binaryMessenger:_messenger];
+        viewIdentifier:viewId
+        arguments:args
+        binaryMessenger:_messenger];
     return aliyunCaptchaButtonController;
 }
 @end
@@ -290,16 +290,18 @@
 
 #pragma mark -WKScriptMessageHandler
 - (void)userContentController:(nonnull WKUserContentController *)userContentController didReceiveScriptMessage:(nonnull WKScriptMessage *)message {
-    NSDictionary *messageBody = message.body;
-    
+//    NSDictionary *messageBody = message.body;
+    // 将 message.body 处理为字符串
+    NSString *messageString = [message.body description];
+
     if ([message.name isEqualToString:@"onSuccess"]) {
-        self.onSuccess(messageBody);
+        self.onSuccess(messageString);
     }else if ([message.name isEqualToString:@"onBizCallback"]) {
-        self.onBizCallback(messageBody);
+        self.onBizCallback(messageString);
     } else if ([message.name isEqualToString:@"onFailure"]) {
-        self.onFailure(messageBody);
+        self.onFailure(messageString);
     } else if ([message.name isEqualToString:@"onError"]) {
-        self.onError(messageBody);
+        self.onError(messageString);
     }
 }
 

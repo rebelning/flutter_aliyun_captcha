@@ -251,8 +251,8 @@ class _HomePageState extends State<HomePage> {
                     child: AliyunCaptchaButton(
                       controller: _captchaController,
                       option: AliyunCaptchaOption(
-                        sceneId: '',
-                        prefix: '',
+                        sceneId: '4ya4rgca',
+                        prefix: 'ibtqnk',
                         timeout: 70000,
                         height: 40,
                         width: Platform.isAndroid == true ? 326 : 382,

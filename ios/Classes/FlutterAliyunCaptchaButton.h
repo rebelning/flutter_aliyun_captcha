@@ -9,7 +9,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void (^FlutterAliyunCaptchaButtonCallback)(NSDictionary *data);
+typedef void (^FlutterAliyunCaptchaButtonCallback)(NSString *data);
 
 // FlutterAliyunCaptchaButtonController
 @interface FlutterAliyunCaptchaButtonController : NSObject <FlutterPlatformView>
