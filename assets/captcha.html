@@ -147,7 +147,10 @@
      
      
       const init = (optionJsonString) => {
-       
+        const designWidth = 750; // 设计稿宽度
+        const deviceWidth = window.innerWidth; // 当前设备的逻辑宽度
+        const scaleFactor = deviceWidth / designWidth; // 缩放因子
+        const convertedWidth = Math.round(750 * scaleFactor); // 转换为实际 px 
         let option = JSON.parse(optionJsonString);
         window.initAliyunCaptcha({
           SceneId: option.sceneId, // 场景ID。根据步骤二新建验证场景后，您可以在验证码场景列表，获取该场景的场景ID
@@ -159,7 +162,8 @@
           onBizResultCallback: onBizResultCallback, // 业务请求结果回调函数，无需修改
           getInstance: getInstance, // 绑定验证码实例函数，无需修改
           slideStyle: {
-            width: option.width || 328,
+           // width: option.width || 328,
+            width: Math.max(320, Math.min(convertedWidth, 750)), // 限制宽度范围在320到750之间
             height: option.height || 40,
           }, // 滑块验���码样式，支持自定义宽度和高度，单位为px。其中，width最小值为320 px
           language: 'cn', // 验证码语言类型，支持简体中文（cn）、繁体中文（tw）、英文（en）

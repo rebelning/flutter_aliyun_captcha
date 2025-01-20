@@ -152,6 +152,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         title: const Text('Plugin example app'),
@@ -241,7 +242,7 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     // width: double.infinity,
                     width: 480,
-                    height: 44,
+                    height: 40,
                     margin: EdgeInsets.only(
                       top: 10,
                       bottom: 10,
@@ -255,7 +256,8 @@ class _HomePageState extends State<HomePage> {
                         prefix: '',
                         timeout: 70000,
                         height: 40,
-                        width: Platform.isAndroid == true ? 326 : 382,
+                        // width: Platform.isAndroid == true ? 326 : 382,
+                        width: screenWidth.toInt() - 32,
                       ),
                       onSuccess: (String? data) async {
                         // {"sig": "...", "token": "..."}
